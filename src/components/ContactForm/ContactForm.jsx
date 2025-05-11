@@ -3,6 +3,9 @@ import s from "./ContactForm.module.css";
 import { useId } from "react";
 import * as Yup from "yup";
 import { FaUser, FaPhone } from "react-icons/fa";
+import { useDispatch } from "react-redux";
+import { addContact } from "../../redux/contactsSlice";
+import { nanoid } from "nanoid";
 
 const FeedbackSchema = Yup.object().shape({
   name: Yup.string()
@@ -19,13 +22,14 @@ const initialValues = {
   number: "",
 };
 
-function ContactForm({ addContact }) {
+function ContactForm() {
   const nameId = useId();
   const numberId = useId();
+  const dispatch = useDispatch();
 
   const handleSubmit = (values, actions) => {
-    addContact(values);
-    actions.resetForm();
+    dispatch(addContact({ id: nanoid(), ...values })); // Ensure we add an `id`
+    actions.resetForm(); // Reset form after submit
   };
 
   return (
@@ -35,21 +39,20 @@ function ContactForm({ addContact }) {
       validationSchema={FeedbackSchema}
     >
       <Form className={s.form}>
-              <div className={s.wrapper}>
-                  <div className={s.label}>
-                      <FaUser />
-                  <label htmlFor={nameId}>Name</label>
-                  </div>
-                  <Field className={s.input }type="text" name="name" id={nameId} />
+        <div className={s.wrapper}>
+          <div className={s.label}>
+            <FaUser />
+            <label htmlFor={nameId}>Name</label>
+          </div>
+          <Field className={s.input} type="text" name="name" id={nameId} />
           <ErrorMessage name="name" component="span" />
         </div>
         <div className={s.wrapper}>
-                  <div className={s.label}>
-                      <FaPhone />
-
-                  <label htmlFor={numberId}>Number</label>
-                  </div>
-          <Field className={s.input } type="number" name="number" id={numberId} />
+          <div className={s.label}>
+            <FaPhone />
+            <label htmlFor={numberId}>Number</label>
+          </div>
+          <Field className={s.input} type="text" name="number" id={numberId} />
           <ErrorMessage name="number" component="span" />
         </div>
         <button type="submit">Add contact</button>
